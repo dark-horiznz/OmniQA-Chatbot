@@ -1,12 +1,15 @@
-from .runner_service import configure_moudles , load_dataset, load_data_to_vectorstore, load_existing_vectorstore
+from .runner_service import configure_moudles , load_dataset_from_hf , load_data_to_vectorstore, load_existing_vectorstore, load_data_from_postgres
 from src.chains import run_chains
 import warnings
 warnings.filterwarnings("ignore")
 
 def run_pipeline(question , 
                  hf_dataset_name=None,
-                 query_col=None,
-                 answer_col=None,
+                 postgres_table=None,
+                 postgres_query_col=None,
+                 postgres_answer_col=None,
+                 hf_query_col=None,
+                 hf_answer_col=None,
                  subset=None,
                  split='train',
                  shuffle=True,
@@ -38,8 +41,13 @@ def run_pipeline(question ,
     if not embeddings or not vectorstore:
         embeddings, pc = configure_moudles()
 
-    if hf_dataset_name and query_col and answer_col:
-        df = load_dataset(hf_dataset_name, query_col, answer_col, subset, split, shuffle)
+    if hf_dataset_name and hf_query_col and hf_answer_col:
+        df = load_dataset_from_hf(hf_dataset_name, hf_query_col, hf_answer_col, subset, split, shuffle)
+        if not vectorstore:
+            vectorstore = load_data_to_vectorstore(df, embeddings)
+    
+    elif postgres_table and postgres_query_col and postgres_answer_col:
+        df = load_data_from_postgres(postgres_query_col, postgres_answer_col, postgres_table)
         if not vectorstore:
             vectorstore = load_data_to_vectorstore(df, embeddings)
     
