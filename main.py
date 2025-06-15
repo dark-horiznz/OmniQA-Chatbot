@@ -7,6 +7,9 @@ web_mode = False
 
 result = run_pipeline(
         question,
+        postgres_table="Medical QA data",
+        postgres_query_col="patient",
+        postgres_answer_col="doctor",
         web_mode=web_mode
     )
 

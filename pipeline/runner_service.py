@@ -1,4 +1,4 @@
-from src.db_utils import pinecone_db
+from src.db_utils import pinecone_db, postgres_db
 from src.embeddings import get_embedding_models
 
 import os
@@ -25,7 +25,7 @@ def configure_moudles():
     pc = Pinecone(os.environ['PINECONE_API_KEY'])
     return embeddings, pc
 
-def load_dataset(hf_dataset_name , query_col , answer_col , split='train' , subset=None, shuffle=True):
+def load_dataset_from_hf(hf_dataset_name , query_col , answer_col , split='train' , subset=None, shuffle=True):
     """
     Load a dataset from Hugging Face and return a DataFrame with specified columns.
     Args:
@@ -45,6 +45,24 @@ def load_dataset(hf_dataset_name , query_col , answer_col , split='train' , subs
     if query_col not in df.columns or answer_col not in df.columns:
         raise ValueError(f"Columns {query_col} and {answer_col} must be present in the dataset.")
     df = df[[query_col, answer_col]].rename(columns={query_col: "question", answer_col: "answer"})
+    return df
+
+def load_data_from_postgres(query_col, answer_col , table_name):
+    """
+    Load data from a PostgreSQL database and return a DataFrame with specified columns.
+    Args:
+        query_col (str): The column name for the query.
+        answer_col (str): The column name for the answer.
+    Returns:
+        pd.DataFrame: A DataFrame containing the specified columns.
+    """
+    print(f"Fetching data from table: {table_name} with columns: {query_col}, {answer_col}")
+    cols = postgres_db()['list_db_columns'](table_name)
+    print(f"Columns in table {table_name}: {cols}")
+    if query_col not in cols or answer_col not in cols:
+        raise ValueError(f"Columns {query_col} and {answer_col} must be present in the table {table_name}, present columns are: {cols}")
+    df = postgres_db()['fetch_qa_data'](query_col, answer_col , table_name)
+    print(f"Data fetched from table {table_name} with shape: {df.shape}")
     return df
 
 def load_data_to_vectorstore(df, embeddings):
