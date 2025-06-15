@@ -1,15 +1,13 @@
-from pipeline.runner import run_pipeline
+from pipeline.runner import run_main
 import warnings
 warnings.filterwarnings("ignore")
 
 question = "I am having a light headache and slight dizziness. I have taken paracetamol but it is not helping. What should I do next?"
-web_mode = False
+web_mode = True
 
-result = run_pipeline(
+
+result = run_main(
         question,
-        postgres_table="Medical QA data",
-        postgres_query_col="patient",
-        postgres_answer_col="doctor",
         web_mode=web_mode
     )
 
