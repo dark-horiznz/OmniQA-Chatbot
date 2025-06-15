@@ -1,35 +1,27 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environments
 .venv/
 venv/
 env/
 ENV/
 
-# Jupyter notebooks
 .ipynb_checkpoints/
 
-# Logs
 *.log
 
-# Test / coverage artifacts
 .pytest_cache/
 .coverage
 coverage.xml
 htmlcov/
 
-# Build / packaging
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# OS files (optional but common)
 .DS_Store
 Thumbs.db
 
-# Environment variables
 .env
