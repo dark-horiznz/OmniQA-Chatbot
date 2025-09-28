@@ -12,7 +12,7 @@ import random
 from tqdm import tqdm
 from typing import List
 
-def get_gemini_model(model_name = "gemini-1.5-pro", temperature = 0.4):
+def get_gemini_model(model_name = "gemini-2.0-flash-lite", temperature = 0.4):
     return genai.GenerativeModel(model_name)
 
 def get_generation_config(temperature = 0.4):
@@ -168,7 +168,7 @@ def process_query(query , context = ''):
     return result
 
 def run(question , context = '' , debug = False):
-    result = process_query(question , context = '')
+    result = process_query(question , context)
     if debug:
         print("\nQuery Results:")
         print(f"Search needed: {result['needs_search']}")

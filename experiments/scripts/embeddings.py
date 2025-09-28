@@ -5,7 +5,7 @@ import numpy as np
 class GeminiEmbeddings(Embeddings):
     def __init__(self, api_key):
         genai.configure(api_key=api_key)
-        self.model_name = "models/embedding-001"  
+        self.model_name = "models/text-embedding-004"  # Updated to newer embedding model
 
     def embed_documents(self, texts):
         return [self._convert_to_float32(genai.embed_content(model=self.model_name, content=text, task_type="retrieval_document")["embedding"]) for text in texts]
