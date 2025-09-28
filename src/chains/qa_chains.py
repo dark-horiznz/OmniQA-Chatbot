@@ -5,27 +5,27 @@ from src.scraping import run
 
 def create_base_chains(answer_template , clarify_template , summary_template , web_summary_template, final_summary_template):
     answer_chain = LLMChain(
-    llm=ChatGroq(model="llama3-70b-8192"), 
+    llm=ChatGroq(model="openai/gpt-oss-120b"), 
     prompt=answer_template,
     )
     
     clarify_chain = LLMChain(
-    llm=ChatGroq(model="llama3-70b-8192", temperature=0.2),
+    llm=ChatGroq(model="openai/gpt-oss-120b", temperature=0.2),
     prompt=clarify_template,
     )
 
     summary_chain = LLMChain(
-    llm=ChatGroq(model="llama3-70b-8192"),
+    llm=ChatGroq(model="openai/gpt-oss-120b"),
     prompt=summary_template,
     )
     
     web_summary_chain = LLMChain(
-        llm=ChatGroq(model="llama3-70b-8192"),
+        llm=ChatGroq(model="openai/gpt-oss-120b"),
         prompt=web_summary_template,
     )
     
     final_summary_chain = LLMChain(
-        llm=ChatGroq(model="llama3-70b-8192"),
+        llm=ChatGroq(model="openai/gpt-oss-120b"),
         prompt=final_summary_template,
     )
     return answer_chain , clarify_chain , summary_chain , web_summary_chain , final_summary_chain

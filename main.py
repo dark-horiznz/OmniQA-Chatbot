@@ -2,13 +2,12 @@ from pipeline.runner import run_main
 import warnings
 warnings.filterwarnings("ignore")
 
-question = "I am having a light headache and slight dizziness. I have taken paracetamol but it is not helping. What should I do next?"
-web_mode = True
-
+question = "What are the three types of machine learning?"
+web_mode = False  # Disable web search to test local docs only
 
 result = run_main(
-        question,
-        web_mode=web_mode
-    )
+    question,
+    web_mode=web_mode
+)
 
 print(result)

@@ -3,6 +3,7 @@ import os
 from tqdm import tqdm
 from langchain_pinecone import PineconeVectorStore
 
+
 def upsert(docs , embeddings , split_size = 100):
     for start in tqdm(range(0, len(docs), split_size)):
         doc = docs[start : start + split_size]
