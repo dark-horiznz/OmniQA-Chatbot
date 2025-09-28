@@ -8,3 +8,4 @@ pinecone-client
 sqlalchemy
 google-generativeai
 langchain_core
+streamlit

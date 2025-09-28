@@ -44,7 +44,6 @@ Plug-and-play chatbot framework for question answering and document-based automa
 
 ## Usage
 
-- Start the chatbot and interact via the terminal or web interface.
 - Ask questions and receive intelligent, relevant answers.
 - (Coming Soon) Upload documents for contextual Q&A.
 
