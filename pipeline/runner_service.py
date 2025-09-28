@@ -1,9 +1,9 @@
-from src.db_utils import pinecone_db, postgres_db
+from src.db_utils import faiss_db, postgres_db
 from src.embeddings import get_embedding_models
+from src.utils.document_processor import load_docs_from_folder
 
 import os
 import google.generativeai as genai
-from pinecone import Pinecone
 from langchain.schema import Document
 
 from datasets import load_dataset
@@ -14,48 +14,26 @@ warnings.filterwarnings("ignore")
 from dotenv import load_dotenv
 load_dotenv()
 
-def configure_moudles():
-    """
-    Configure the necessary modules for the application.
-    Returns:
-        tuple: Contains the embeddings model and the Pinecone vector store.
-    """
+def configure_modules():
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     embeddings = get_embedding_models()['GeminiEmbeddings'](api_key=os.environ["GEMINI_API_KEY"])
-    pc = Pinecone(os.environ['PINECONE_API_KEY'])
-    return embeddings, pc
+    return embeddings
 
 def load_dataset_from_hf(hf_dataset_name , query_col , answer_col , split='train' , subset=None, shuffle=True):
-    """
-    Load a dataset from Hugging Face and return a DataFrame with specified columns.
-    Args:
-        hf_dataset_name (str): The name of the dataset on Hugging Face.
-        query_col (str): The column name for the query.
-        answer_col (str): The column name for the answer.
-        split (str): The split of the dataset to load (default is 'train').
-        subset (int, optional): If provided, only a subset of the dataset will be returned.
-        shuffle (bool): Whether to shuffle the dataset before returning.
-    Returns:
-        pd.DataFrame: A DataFrame containing the specified columns.
-    """
     data = load_dataset(hf_dataset_name , split=split)
-    if subset and subset < len(data):
-        data = data.shuffle(42)[:subset]
-    df = pd.DataFrame(data)
+    if data is None:
+        return pd.DataFrame()
+    df = data.to_pandas()
+    if shuffle:
+        df = df.sample(frac=1).reset_index(drop=True)
+    if subset:
+        df = df.head(subset)
     if query_col not in df.columns or answer_col not in df.columns:
         raise ValueError(f"Columns {query_col} and {answer_col} must be present in the dataset.")
     df = df[[query_col, answer_col]].rename(columns={query_col: "question", answer_col: "answer"})
     return df
 
 def load_data_from_postgres(query_col, answer_col , table_name):
-    """
-    Load data from a PostgreSQL database and return a DataFrame with specified columns.
-    Args:
-        query_col (str): The column name for the query.
-        answer_col (str): The column name for the answer.
-    Returns:
-        pd.DataFrame: A DataFrame containing the specified columns.
-    """
     print(f"Fetching data from table: {table_name} with columns: {query_col}, {answer_col}")
     cols = postgres_db()['list_db_columns'](table_name)
     print(f"Columns in table {table_name}: {cols}")
@@ -66,25 +44,27 @@ def load_data_from_postgres(query_col, answer_col , table_name):
     return df
 
 def load_data_to_vectorstore(df, embeddings):
-    """
-    Load data from a DataFrame into a Pinecone vector store.
-    Args:
-        df (pd.DataFrame): DataFrame containing 'question' and 'answer' columns.
-        embeddings (Embeddings): The embeddings model to use for vectorization.
-    Returns:
-        PineconeVectorStore: The vector store containing the upserted documents.
-    """
     docs = [Document(page_content=f"Q: {row['question']}\nA: {row['answer']}", metadata={'Page index':i+1})
     for i, row in df.iterrows()]
-    vectorstore = pinecone_db()['upsert'](docs, embeddings)
+    vectorstore = faiss_db()['upsert'](docs, embeddings)
     return vectorstore
 
 def load_existing_vectorstore(embeddings):
-    """
-    Load the vector store from Pinecone.
-    Args:
-        embeddings (Embeddings): The embeddings model to use for vectorization.
-    Returns:
-        PineconeVectorStore: The loaded vector store.
-    """
-    return pinecone_db()['load_existing'](embeddings)
+    return faiss_db()['load_existing'](embeddings)
+
+def load_docs_to_vectorstore(docs_path, embeddings, faiss_index_path="faiss_index"):
+    vectorstore = load_existing_vectorstore(embeddings)
+    
+    if vectorstore is None:
+        docs = load_docs_from_folder(docs_path)
+        if not docs:
+            print(f"No documents found in {docs_path}")
+            return None
+        
+        vectorstore = faiss_db()['upsert'](docs, embeddings)
+        faiss_db()['save'](vectorstore, faiss_index_path)
+        print(f"Created and saved new FAISS index with {len(docs)} document chunks")
+    else:
+        print("Loaded existing FAISS index")
+    
+    return vectorstore
