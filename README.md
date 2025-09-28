@@ -17,7 +17,6 @@ Plug-and-play chatbot framework for question answering and document-based automa
 - **Language:** Python
 - **Core Concepts:** Retrieval Augmented Generation (RAG), QA Assistant
 - **License:** [Creative Commons Zero v1.0 Universal (CC0-1.0)](LICENSE)
-- **Keywords:** plug-and-play-chatbot, question-answering-assistant, rag-chatbot, tools-and-automation, web-search
 
 ## Getting Started
 
@@ -63,4 +62,4 @@ Maintained by [dark-horiznz](https://github.com/dark-horiznz).
 
 ---
 
-> For more details and advanced configuration, see the wiki or documentation files.
+> For more details and advanced configuration, see the documentation files.
