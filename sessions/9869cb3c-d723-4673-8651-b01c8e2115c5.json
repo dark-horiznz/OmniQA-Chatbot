@@ -1,0 +1,34 @@
+{
+  "session_id": "9869cb3c-d723-4673-8651-b01c8e2115c5",
+  "created_at": "2025-09-28T20:04:53.211446",
+  "last_accessed": "2025-09-28T20:04:53.211834",
+  "user_context": {
+    "user_id": "demo_user"
+  },
+  "conversation_history": [
+    {
+      "question": "What causes headaches?",
+      "answer": "Headaches can be caused by stress, dehydration, tension, or underlying medical conditions.",
+      "timestamp": "2025-09-28T20:04:53.211716",
+      "sources": [
+        {
+          "source_id": "doc1",
+          "source_type": "vectorstore",
+          "confidence": 0.8
+        }
+      ],
+      "confidence_score": 0.85,
+      "web_search_used": false,
+      "retrieval_docs": []
+    },
+    {
+      "question": "How can I prevent them?",
+      "answer": "Prevention includes staying hydrated, managing stress, getting adequate sleep, and avoiding triggers.",
+      "timestamp": "2025-09-28T20:04:53.211832",
+      "sources": [],
+      "confidence_score": 0.9,
+      "web_search_used": true,
+      "retrieval_docs": []
+    }
+  ]
+}

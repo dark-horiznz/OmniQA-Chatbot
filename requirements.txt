@@ -1,0 +1,10 @@
+faiss-cpu
+langchain
+langchain-community
+tqdm
+langchain_groq
+langchain_pinecone
+pinecone-client
+sqlalchemy
+google-generativeai
+langchain_core
